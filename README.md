@@ -25,11 +25,29 @@ setup(
 Above, `extversion` is a callable (a plain function in this case) that
 accepts one parameter with a `setuptools.dist.Distribution`. It's silly
 of course to just return a static string here, as you could've just used
-the `version` parameter of vanilla setuptools. So on to a more useful
-example...
+the `version` parameter of vanilla setuptools. But this illustrates the
+basic concept and you can make your real-life function do something much
+more interesting.
 
-A more useful thing to do is to generate the version from VCS tags --
-here's an example for git -- here we run an external shell command:
+Instead of providing a `callable` object, you can provide a dotted-path
+string to specify the function -- e.g.:
+
+```python
+setup(
+    name='my_distribution',
+    setup_requires=['setuptools_extversion'],
+    extversion='my_package.version:get_package_version',
+)
+```
+
+There is no need to `import` the module; the `import` will be done for
+you automatically, on-demand.
+
+One thing that is useful to do is to call an external command -- you may
+want to run, say, `git describe --tags --dirty` to generate your version
+number. You could of course do this using the features already
+described, by writing a Python function that invokes a subprocess. But
+there is a shortcut that saves you from the trouble of doing this:
 
 ```python
 setup(
@@ -43,33 +61,10 @@ Note that this is quite flexible and powerful. You could set `command`
 to:
 
 - A command for another VCS such as Mercurial, bzr, etc.
-- A shell script or Python program that does something custom.
-
-If you prefer to do everything in Python and don't want to call a
-subprocess, you could define a Python function to call by adding a
-`'function'` key to the dict -- e.g.:
-
-```python
-setup(
-    name='my_distribution',
-    setup_requires=['setuptools_extversion'],
-    extversion={'function': 'my_package.version:get_package_version'},
-)
-```
-
-This will call the specified function with a single argument which is
-the `setuptools.dist.Distribution` object. Note that the value here can
-be the callable itself or it can be a string containing a dotted path to
-said function.
-
-As a shortcut, you can simply provide the function directly as a string
-or callable object and omit the dict:
-
-```python
-setup(
-    name='my_distribution',
-    setup_requires=['setuptools_extversion'],
-    extversion='my_package.version:get_package_version',
-)
-```
+- A shell script or Python program that does whatever:
+  - Maybe fetch the version from a text file?
+  - Maybe fetch the version from some database or server?
+  - Maybe just a simple program that prompts for the version number on
+    the console?
+  (Have other ideas? Send me a PR!)
 
