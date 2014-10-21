@@ -5,6 +5,9 @@ Allows getting distribution version from external sources (e.g.: shell command,
 Python function)
 """
 
+import subprocess
+
+
 VERSION_PROVIDER_KEY = 'extversion'
 
 
@@ -14,7 +17,13 @@ def version_calc(dist, attr, value):
     """
 
     if attr == VERSION_PROVIDER_KEY:
-        extversion = value
+        if callable(value):
+            extversion = value
+        elif hasattr(value, 'get'):
+            if value.get('command'):
+                extversion = command(value.get('command'), shell=True)
+        else:
+            raise Exception('Unknown type for %s = %r' % (attr, value))
         dist.metadata.version = extversion(dist)
 
 
@@ -23,7 +32,7 @@ class command(object):
         self.args = args
         self.kwargs = kwargs
 
-    def __call__(self, distribution, metadata, command):
+    def __call__(self, distribution):
         return subprocess.check_output(*self.args, **self.kwargs).strip()
 
 
