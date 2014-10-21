@@ -33,6 +33,44 @@ the `version` parameter of vanilla setuptools. But this illustrates the
 basic concept and you can make your real-life function do something much
 more interesting.
 
+As a slightly more useful example function, consider this one that
+prompts the user to enter a version string:
+
+```python
+def get_version(distribution):
+    return raw_input("Please enter a version string for %s: "
+                     % distribution.metadata.name)
+
+setup(
+    name='my_distribution',
+    setup_requires=['setuptools_extversion'],
+    extversion=get_version,
+)
+```
+
+Another possible use would be to read the version string from a file:
+
+```python
+def get_version(distribution):
+    return open('VERSION.txt').read()
+
+setup(
+    name='my_distribution',
+    setup_requires=['setuptools_extversion'],
+    extversion=get_version,
+)
+```
+
+There's no reason that you couldn't use a `lambda`:
+
+```python
+setup(
+    name='my_distribution',
+    setup_requires=['setuptools_extversion'],
+    extversion=lambda d: open('VERSION.txt').read(),
+)
+```
+
 Instead of providing a `callable` object, you can provide a dotted-path
 string to specify the function -- e.g.:
 
