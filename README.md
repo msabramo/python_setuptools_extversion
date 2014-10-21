@@ -20,3 +20,9 @@ setup(
     extversion=extversion,
 )
 ```
+
+Above, `extversion` is a callable (a plain function in this case) that
+accepts one parameter with a `setuptools.Distribution`. It's silly of
+course to just return a static string here, as you could've just used
+the `version` parameter of vanilla setuptools. So on to a more useful
+example...
