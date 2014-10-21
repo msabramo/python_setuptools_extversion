@@ -1,7 +1,11 @@
 python_setuptools_extversion
 ============================
 
-Adds an `extversion` param to setup that can be a callable
+Adds an `extversion` param to `setup` that can specify various ways of
+getting a version string dynamically, from an external source:
+
+- A Python function
+- An external program (e.g.: `git`, `hg`, etc.)
 
 Examples
 --------
