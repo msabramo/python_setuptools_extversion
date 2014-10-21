@@ -11,6 +11,8 @@ import pkg_resources
 import subprocess
 import sys
 
+from vendor.dotted_name_resolver import DottedNameResolver
+
 
 # True if we are running on Python 3.
 PY3 = sys.version_info[0] == 3
@@ -103,7 +105,7 @@ class PkgResourcesResolver(object):
 
 
 class function(object):
-    default_resolver = PkgResourcesResolver()
+    default_resolver = DottedNameResolver()
 
     def __init__(self, func, resolver=None, *args, **kwargs):
         self.func = func
