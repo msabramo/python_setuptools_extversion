@@ -86,7 +86,10 @@ directory to the directory containing `setup.py` before executing.
 custom via an external program
 ------------------------------
 
-Generate version by executing an external program:
+To indicate an external command that should be called, enclose it in
+backquotes.
+
+For example:
 
 ```python
 setup(
