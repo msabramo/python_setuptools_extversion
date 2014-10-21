@@ -58,11 +58,11 @@ def version_calc(dist, attr, value):
                     *value.get('args', ()),
                     **value.get('kwargs', {}))
         elif isinstance(value, string_types):
-            if ':' in value:
-                extversion = function(value)
-            elif value.startswith('`'):
+            if value.startswith('`'):
                 cmd = value[1:-1]
                 extversion = command(cmd, shell=True)
+            else:
+                extversion = function(value)
         else:
             raise Exception('Unknown type for %s = %r' % (attr, value))
 
@@ -91,16 +91,28 @@ class command(object):
         return subprocess.check_output(*self.args, **self.kwargs).strip()
 
 
+class PkgResourcesResolver(object):
+    parse = pkg_resources.EntryPoint.parse
+
+    def maybe_resolve(self, dotted):
+        if isinstance(dotted, basestring):
+            entry_point = self.parse('x=' + dotted)
+            return entry_point.load(False)
+
+        return dotted
+
+
 class function(object):
-    def __init__(self, func, *args, **kwargs):
+    default_resolver = PkgResourcesResolver()
+
+    def __init__(self, func, resolver=None, *args, **kwargs):
         self.func = func
         self.args = args
         self.kwargs = kwargs
+        self.resolver = resolver or self.default_resolver
 
     def __call__(self, *args, **kwargs):
-        if isinstance(self.func, basestring):
-            ep = pkg_resources.EntryPoint.parse('x=' + self.func)
-            self.func = ep.load(False)
-            args = list(self.args + args)
-            kwargs = dict(self.kwargs.items() + kwargs.items())
+        self.func = self.resolver.maybe_resolve(self.func)
+        args = list(self.args + args)
+        kwargs = dict(self.kwargs.items() + kwargs.items())
         return self.func(*args, **kwargs)
