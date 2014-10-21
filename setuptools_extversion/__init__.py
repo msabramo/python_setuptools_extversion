@@ -35,8 +35,12 @@ def version_calc(dist, attr, value):
                 extversion = command(value.get('command'), shell=True)
             if value.get('function'):
                 extversion = function(value.get('function'))
-        elif isinstance(value, string_types) and ':' in value:
-            extversion = function(value)
+        elif isinstance(value, string_types):
+            if ':' in value:
+                extversion = function(value)
+            elif value.startswith('`'):
+                cmd = value[1:-1]
+                extversion = command(cmd, shell=True)
         else:
             raise Exception('Unknown type for %s = %r' % (attr, value))
         dist.metadata.version = extversion(dist)

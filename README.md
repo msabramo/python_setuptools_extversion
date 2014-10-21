@@ -47,24 +47,39 @@ One thing that is useful to do is to call an external command -- you may
 want to run, say, `git describe --tags --dirty` to generate your version
 number. You could of course do this using the features already
 described, by writing a Python function that invokes a subprocess. But
-there is a shortcut that saves you from the trouble of doing this:
+there is a shortcut that saves you from the trouble of doing this --
+simply enclose the string in backquotes and it will be treated as a
+shell command:
 
 ```python
 setup(
     name='my_distribution',
     setup_requires=['setuptools_extversion'],
-    extversion={'command': 'git describe --tags --dirty'},
+    extversion='`git describe --tags --dirty`',
 )
 ```
 
-Note that this is quite flexible and powerful. You could set `command`
-to:
+Mercurial users could use this:
 
-- A command for another VCS such as Mercurial, bzr, etc.
-- A shell script or Python program that does whatever:
-  - Maybe fetch the version from a text file?
-  - Maybe fetch the version from some database or server?
-  - Maybe just a simple program that prompts for the version number on
-    the console?
-  (Have other ideas? Send me a PR!)
+```python
+setup(
+    name='my_distribution',
+    setup_requires=['setuptools_extversion'],
+    extversion='`hg log -r . '
+                   '--template "{latesttag}-{branch}-{latesttagdistance}'
+                   '-m{node|short}"`',
+)
+```
+
+Note that the ability to generate a version from a Python callable or an
+external command is extremely flexible and powerful. Here are some ideas on how
+you could use this:
+
+- Run a command for another VCS such as bzr, darcs, etc.
+- Call a Python function that fetches version from a text file
+- Call a Python function that fetches version from some database or server
+- Call a Python function that prompts for the version number on the console
+  using `input` or `raw_input`
+
+Have other ideas? Send me a PR!
 
