@@ -5,6 +5,8 @@ Allows getting distribution version from external sources (e.g.: shell command,
 Python function)
 """
 
+import contextlib
+import os
 import pkg_resources
 import subprocess
 import sys
@@ -35,6 +37,10 @@ def hg(distribution):
     return cmd(distribution)
 
 
+def read_file(filename, distribution):
+    return open(filename).read().strip()
+
+
 def version_calc(dist, attr, value):
     """
     Handler for parameter to setup(extversion=value)
@@ -47,7 +53,10 @@ def version_calc(dist, attr, value):
             if value.get('command'):
                 extversion = command(value.get('command'), shell=True)
             if value.get('function'):
-                extversion = function(value.get('function'))
+                extversion = function(
+                    value.get('function'),
+                    *value.get('args', ()),
+                    **value.get('kwargs', {}))
         elif isinstance(value, string_types):
             if ':' in value:
                 extversion = function(value)
@@ -56,7 +65,21 @@ def version_calc(dist, attr, value):
                 extversion = command(cmd, shell=True)
         else:
             raise Exception('Unknown type for %s = %r' % (attr, value))
-        dist.metadata.version = extversion(dist)
+
+        setup_py_dir = os.path.dirname(sys.argv[0])
+
+        with chdir(setup_py_dir):
+            dist.metadata.version = extversion(distribution=dist)
+
+
+@contextlib.contextmanager
+def chdir(new_dir):
+    if new_dir:
+        old_dir = os.curdir
+        os.chdir(new_dir)
+    yield
+    if new_dir:
+        os.chdir(old_dir)
 
 
 class command(object):
@@ -79,6 +102,5 @@ class function(object):
             ep = pkg_resources.EntryPoint.parse('x=' + self.func)
             self.func = ep.load(False)
             args = list(self.args + args)
-            kwargs = dict(self.kwargs)
-            kwargs.update(kwargs)
+            kwargs = dict(self.kwargs.items() + kwargs.items())
         return self.func(*args, **kwargs)
