@@ -7,6 +7,16 @@ Python function)
 
 import pkg_resources
 import subprocess
+import sys
+
+
+# True if we are running on Python 3.
+PY3 = sys.version_info[0] == 3
+
+if PY3: # pragma: no cover
+    string_types = str,
+else:
+    string_types = basestring,
 
 
 VERSION_PROVIDER_KEY = 'extversion'
@@ -25,6 +35,8 @@ def version_calc(dist, attr, value):
                 extversion = command(value.get('command'), shell=True)
             if value.get('function'):
                 extversion = function(value.get('function'))
+        elif isinstance(value, string_types) and ':' in value:
+            extversion = function(value)
         else:
             raise Exception('Unknown type for %s = %r' % (attr, value))
         dist.metadata.version = extversion(dist)
