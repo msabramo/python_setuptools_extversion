@@ -22,6 +22,19 @@ else:
 VERSION_PROVIDER_KEY = 'extversion'
 
 
+def git(distribution):
+    cmd = command(['git', 'describe', '--tags', '--dirty'])
+    return cmd(distribution)
+
+
+def hg(distribution):
+    cmd = command([
+        'hg', 'log', '-r .',
+        '--template',
+        '{latesttag}-{branch}-{latesttagdistance}-m{node|short}'])
+    return cmd(distribution)
+
+
 def version_calc(dist, attr, value):
     """
     Handler for parameter to setup(extversion=value)

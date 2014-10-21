@@ -113,6 +113,21 @@ setup(
 )
 ```
 
+The last two examples are illustrative of the power of using external
+commands, but they are actually more verbose than need be, because this
+package provides shortcut functions for `git` and `hg` (Mercurial). So
+getting the version from git tags is as simple as:
+
+```python
+extversion='setuptools_extversion:git'
+```
+
+and getting the version from Mercurial tags is as simple as:
+
+```python
+extversion='setuptools_extversion:hg',
+```
+
 Note that the ability to generate a version from a Python callable or an
 external command is extremely flexible and powerful. Here are some ideas on how
 you could use this:
