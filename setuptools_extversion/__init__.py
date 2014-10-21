@@ -5,6 +5,7 @@ Allows getting distribution version from external sources (e.g.: shell command,
 Python function)
 """
 
+import pkg_resources
 import subprocess
 
 
@@ -22,6 +23,8 @@ def version_calc(dist, attr, value):
         elif hasattr(value, 'get'):
             if value.get('command'):
                 extversion = command(value.get('command'), shell=True)
+            if value.get('function'):
+                extversion = function(value.get('function'))
         else:
             raise Exception('Unknown type for %s = %r' % (attr, value))
         dist.metadata.version = extversion(dist)
