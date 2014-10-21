@@ -17,7 +17,7 @@ def extversion(distribution):
 
 setup(
     name='my_distribution',
-    setup_requires='setuptools_extversion',
+    setup_requires=['setuptools_extversion'],
     extversion=extversion,
 )
 ```
@@ -34,7 +34,7 @@ here's an example for git -- here we run an external shell command:
 ```python
 setup(
     name='my_distribution',
-    setup_requires='setuptools_extversion',
+    setup_requires=['setuptools_extversion'],
     extversion={'command': 'git describe --tags --dirty'},
 )
 ```
