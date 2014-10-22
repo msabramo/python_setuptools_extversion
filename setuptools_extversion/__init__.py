@@ -43,6 +43,10 @@ def read_file(filename, distribution):
     return open(filename).read().strip()
 
 
+def getenv(key, distribution):
+    return os.getenv(key)
+
+
 def version_calc(dist, attr, value):
     """
     Handler for parameter to setup(extversion=value)

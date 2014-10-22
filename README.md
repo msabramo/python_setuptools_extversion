@@ -13,6 +13,7 @@ generate the version from the following sources:
 - git tags
 - hg (Mercurial) tags
 - text file
+- environment variable
 
 git tags
 --------
@@ -82,6 +83,18 @@ os.path.join(os.path.dirname(__file__), 'VERSION.txt')
 
 Under the covers, the infrastructure temporarily changes the current
 directory to the directory containing `setup.py` before executing.
+
+environment variable
+--------------------
+
+```python
+setup(
+    name='my_distribution',
+    setup_requires=['setuptools_extversion'],
+    extversion={'function': 'getenv',
+                'args': ['PYTHON_PACKAGE_VERSION']},
+)
+```
 
 custom via an external program
 ------------------------------
