@@ -110,11 +110,11 @@ class PkgResourcesResolver(object):
 class function(object):
     default_resolver = DottedNameResolver()
 
-    def __init__(self, func, resolver=None, *args, **kwargs):
+    def __init__(self, func, *args, **kwargs):
         self.func = func
         self.args = args
         self.kwargs = kwargs
-        self.resolver = resolver or self.default_resolver
+        self.resolver = kwargs.get('resolver') or self.default_resolver
 
     def __call__(self, *args, **kwargs):
         self.func = self.maybe_resolve(self.func)
