@@ -69,8 +69,7 @@ Read the version from a file called `VERSION.txt`:
 setup(
     name='my_distribution',
     setup_requires=['setuptools_extversion'],
-    extversion={'function': 'read_file',
-                'args': ['VERSION.txt']},
+    extversion=('read_file', ['VERSION.txt']),
 )
 ```
 
@@ -91,8 +90,7 @@ environment variable
 setup(
     name='my_distribution',
     setup_requires=['setuptools_extversion'],
-    extversion={'function': 'getenv',
-                'args': ['PYTHON_PACKAGE_VERSION']},
+    extversion=('getenv', ['PYTHON_PACKAGE_VERSION']),
 )
 ```
 

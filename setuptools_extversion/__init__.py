@@ -69,6 +69,12 @@ def version_calc(dist, attr, value):
                 extversion = command(cmd, shell=True)
             else:
                 extversion = function(value)
+        elif isinstance(value, tuple):
+            extversion = function(value[0])
+            if len(value) > 1:
+                extversion.args = tuple(value[1])
+            if len(value) > 2:
+                extversion.kwargs = dict(value[2])
         else:
             raise Exception('Unknown type for %s = %r' % (attr, value))
 
