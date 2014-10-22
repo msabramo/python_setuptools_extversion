@@ -98,8 +98,11 @@ class PkgResourcesResolver(object):
 
     def maybe_resolve(self, dotted):
         if isinstance(dotted, basestring):
-            entry_point = self.parse('x=' + dotted)
-            return entry_point.load(False)
+            if dotted.startswith(':'):
+                return globals()[dotted[1:]]
+            else:
+                entry_point = self.parse('x=' + dotted)
+                return entry_point.load(False)
 
         return dotted
 
@@ -114,7 +117,13 @@ class function(object):
         self.resolver = resolver or self.default_resolver
 
     def __call__(self, *args, **kwargs):
-        self.func = self.resolver.maybe_resolve(self.func)
+        self.func = self.maybe_resolve(self.func)
         args = list(self.args + args)
         kwargs = dict(self.kwargs.items() + kwargs.items())
         return self.func(*args, **kwargs)
+
+    def maybe_resolve(self, dotted):
+        try:
+            return self.resolver.maybe_resolve(dotted)
+        except ImportError:
+            return self.resolver.maybe_resolve(':' + dotted)

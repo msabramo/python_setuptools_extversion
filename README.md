@@ -23,7 +23,7 @@ Generate version using git tags:
 setup(
     name='my_distribution',
     setup_requires=['setuptools_extversion'],
-    extversion='setuptools_extversion:git',
+    extversion='git',
 )
 ```
 
@@ -44,7 +44,7 @@ Generate version using hg tags:
 setup(
     name='my_distribution',
     setup_requires=['setuptools_extversion'],
-    extversion='setuptools_extversion:hg',
+    extversion='hg',
 )
 ```
 
@@ -68,7 +68,7 @@ Read the version from a file called `VERSION.txt`:
 setup(
     name='my_distribution',
     setup_requires=['setuptools_extversion'],
-    extversion={'function': 'setuptools_extversion:read_file',
+    extversion={'function': 'read_file',
                 'args': ['VERSION.txt']},
 )
 ```
