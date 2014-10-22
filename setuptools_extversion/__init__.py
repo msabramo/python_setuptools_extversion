@@ -39,7 +39,7 @@ def hg(distribution):
     return cmd(distribution)
 
 
-def read_file(filename, distribution):
+def slurp(filename, distribution):
     return open(filename).read().strip()
 
 
