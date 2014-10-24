@@ -125,9 +125,9 @@ class function(object):
         self.args = args
         self.kwargs = kwargs
         self.resolver = kwargs.get('resolver') or self.default_resolver
+        self.func = self.maybe_resolve(self.func)
 
     def __call__(self, *args, **kwargs):
-        self.func = self.maybe_resolve(self.func)
         args = list(self.args + args)
         kwargs = dict(self.kwargs.items() + kwargs.items())
         return self.func(*args, **kwargs)
